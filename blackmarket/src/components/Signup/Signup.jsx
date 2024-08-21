@@ -1,5 +1,6 @@
 import { useState } from "react";
-
+import { axiosInstance } from "../../axios";
+import { useNavigate } from "react-router-dom";
 
 export const Signup = () => {
 
@@ -8,16 +9,47 @@ export const Signup = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
-    const handleSubmit = (event) => {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const navigate  = useNavigate();
+
+    const handleSubmit = async (event) => {
 
         event.preventDefault();
-
         console.log('Gormulario ENviado ');
-    }
+
+        setIsLoading(true);
+
+        try {
+            const response = await axiosInstance.post("/users", {
+                user: {
+                    name,
+                    email,
+                    password,
+                    password_confirmation: confirmPassword,
+                },
+            });
+            
+            console.log("User registration succesful", response);
+
+            navigate("/login");
+
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoading(false); 
+
+            setName("");
+            setEmail("");
+            setPassword("");
+            setConfirmPassword("");
+        }
+
+    }; 
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
+        <div className="min-h-screen flex items-center justify-center">
+            <form onSubmit={handleSubmit} className="bg-blue-100 p-8 rounded-lg shadow-md w-full max-w-lg h-auto">
 
                 <div className="mb-6">
                     <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">

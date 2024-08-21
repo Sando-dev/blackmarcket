@@ -1,17 +1,40 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { axiosInstance } from "../../axios";
+import { useNavigate } from "react-router-dom";
 
-
+import { UserSessionContext } from "../../context/UserSessionProvider";
 
 export const Login = () => {
     
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = (event) => {
+    const navigate = useNavigate();
+
+    const { handleLogin } = useContext(UserSessionContext);
+
+    const handleSubmit = async (event) => {
         
         event.preventDefault();
 
         console.log("Formulario Enviado!!!!1!!!");
+
+        try {
+            const response = await axiosInstance.post("/users/sign_in", {
+                user: {
+                    email,
+                    password,  
+                },
+            });
+            console.log("Login Succesful", response);
+
+
+            handleLogin();
+            navigate("/");
+
+        } catch (error) {
+            console.log(error);
+        }
     }
 
 
